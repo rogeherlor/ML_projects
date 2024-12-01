@@ -1,4 +1,4 @@
-# Karpathy GPT-2
+# Environment for Karpathy's GPT-2 training tutorial
 
 This repository contains the implementation of Karpathy's GPT-2 model.
 
