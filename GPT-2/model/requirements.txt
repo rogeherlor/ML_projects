@@ -1,0 +1,6 @@
+torch==2.5.1+cu121
+numpy
+transformers
+notebook
+matplotlib
+tornado
