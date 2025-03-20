@@ -1,0 +1,44 @@
+# Use the official Ubuntu 22.04 image
+FROM ubuntu:22.04
+
+# Set environment variables to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the package list and install necessary packages
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    net-tools \
+    x11-apps \
+    python3-tk \
+    apt-utils \
+    wget \
+    build-essential \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install the NVIDIA CUDA keyring package
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb && \
+    dpkg -i cuda-keyring_1.0-1_all.deb && \
+    rm cuda-keyring_1.0-1_all.deb
+
+# Install the CUDA toolkit
+RUN apt-get update && \
+    apt-get -y install cuda-toolkit-12-1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set CUDA environment variables
+ENV CUDA_HOME=/usr/local/cuda-12.1
+ENV PATH=$CUDA_HOME/bin:$PATH
+ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the requirements.txt file into the Docker image and install dependencies
+COPY ./model/requirements.txt /app/requirements.txt
+RUN pip3 install -r /app/requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+RUN pip3 install flash-attn --no-build-isolation
+
+# Copy the entire project into the Docker image
+COPY ./model /app

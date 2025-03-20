@@ -1,0 +1,11 @@
+torch==2.5.1+cu121
+numpy
+
+transformers
+accelerate
+av
+bitsandbytes
+packaging
+
+notebook
+matplotlib
